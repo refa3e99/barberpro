@@ -1,0 +1,77 @@
+{
+  "entities": {
+    "userProfile": {
+      "title": "UserProfile",
+      "description": "User profile containing basic info and role.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["customer", "admin"] },
+        "createdAt": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["userId", "email", "name", "role", "createdAt"]
+    },
+    "service": {
+      "title": "Service",
+      "description": "A service provided by the barbershop.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "duration": { "type": "number", "description": "Duration in minutes" },
+        "price": { "type": "number" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["name", "duration", "price", "isActive", "createdAt"]
+    },
+    "appointment": {
+      "title": "Appointment",
+      "description": "A reservation made by a customer.",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "barberId": { "type": "string" },
+        "serviceId": { "type": "string" },
+        "startTime": { "type": "string", "format": "timestamp" },
+        "endTime": { "type": "string", "format": "timestamp" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "completed", "canceled"] },
+        "createdAt": { "type": "string", "format": "timestamp" },
+        "updatedAt": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["customerId", "barberId", "serviceId", "startTime", "endTime", "status", "createdAt", "updatedAt"]
+    },
+    "barberAvailability": {
+      "title": "BarberAvailability",
+      "description": "Availability overrides or regular schedule blocks.",
+      "type": "object",
+      "properties": {
+        "startTime": { "type": "string", "format": "timestamp" },
+        "endTime": { "type": "string", "format": "timestamp" },
+        "type": { "type": "string", "enum": ["working", "blocked"] }
+      },
+      "required": ["startTime", "endTime", "type"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/userProfile" },
+      "description": "Stores user profiles including their role. Only admins can modify roles."
+    },
+    "/users/{userId}/availability/{slotId}": {
+      "schema": { "$ref": "#/entities/barberAvailability" },
+      "description": "Stores specific availability slots for a barber."
+    },
+    "/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/service" },
+      "description": "Stores all available barbershop services."
+    },
+    "/appointments/{appointmentId}": {
+      "schema": { "$ref": "#/entities/appointment" },
+      "description": "Stores all appointments."
+    }
+  }
+}
